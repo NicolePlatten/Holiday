@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1b2a">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Gold Air</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Mono:wght@400;500&display=swap">
+
+</head>
+<body>
+<style>
+/* ============================================================
+   GOLD AIR — surprise reveal prototype
+   A single visual world: brass on midnight, aged ticket paper.
+   The lagoon turquoise appears NOWHERE until the real reveal —
+   the palette itself carries the twist.
+   ============================================================ */
+
+:root {
+  --night:     #0e1b2a;
+  --night-2:   #16283b;
+  --night-3:   #1e3549;
+  --gold:      #e0b15c;
+  --gold-dim:  #a8834a;
+  --gold-soft: #f0d9a8;
+  --coral:     #e2705a;
+  --paper:     #f3e8d4;
+  --paper-2:   #e6d7bd;
+  --ink:       #2a2118;
+  --lagoon:    #2fb3a8;
+  --lagoon-lt: #7fdcd2;
+  --sand:      #f7ecd8;
+
+  --poster: "Anton", "Phosphate", "Haettenschweiler", Impact, "Arial Narrow", sans-serif;
+  --serif:  "Fraunces", "Iowan Old Style", Charter, Georgia, serif;
+  --mono:   "DM Mono", ui-monospace, "SF Mono", Menlo, "Courier New", monospace;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.55;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Film grain over everything — stops the flat colours reading as digital */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: .16;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(224,177,92,.5) .5px, transparent .6px),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.4) .5px, transparent .6px),
+    radial-gradient(circle at 45% 85%, rgba(224,177,92,.4) .5px, transparent .6px);
+  background-size: 7px 7px, 11px 11px, 13px 13px;
+  mix-blend-mode: overlay;
+}
+
+#app {
+  position: relative;
+  height: 100dvh;
+  max-width: 520px;
+  margin-inline: auto;
+  overflow: hidden;
+}
+
+/* ---------- Scenes ------------------------------------------------ */
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  padding: 1.5rem 1.35rem calc(1.5rem + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.scene.is-on { display: flex; animation: sceneIn .5s cubic-bezier(.22,1,.36,1) both; }
+
+@keyframes sceneIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Landmark constellation backdrop ----------------------- */
+
+#sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#sky svg { position: absolute; color: var(--gold); opacity: .085; }
+
+#sky .qm {
+  position: absolute;
+  font-family: var(--poster);
+  color: var(--gold);
+  opacity: .10;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ---------- Type -------------------------------------------------- */
+
+.kicker {
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0;
+}
+
+.poster {
+  font-family: var(--poster);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: .88;
+  letter-spacing: .01em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1.poster { font-size: clamp(2.9rem, 15vw, 4.4rem); }
+h2.poster { font-size: clamp(2rem, 10vw, 3rem); }
+
+.script {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: var(--gold-soft);
+}
+
+p { margin: 0; }
+.stack { display: flex; flex-direction: column; }
+.gap-xs { gap: .5rem; }  .gap-sm { gap: .85rem; }
+.gap-md { gap: 1.35rem; } .gap-lg { gap: 2.25rem; }
+.grow { flex: 1; }
+/* Modifier only — must NOT set `display`, or it overrides .scene's
+   `display:none` (same specificity, later in the file) and every
+   scene renders at once. */
+.scene.centre { justify-content: center; }
+
+.rule { height: 1px; background: linear-gradient(90deg, var(--gold-dim), transparent); border: 0; margin: 0; }
+
+/* ---------- Buttons ----------------------------------------------- */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  width: 100%;
+  min-height: 58px;
+  padding: 1rem 1.4rem;
+  border: 0;
+  border-radius: 2px;
+  background: var(--gold);
+  color: var(--night);
+  font-family: var(--poster);
+  font-size: 1.1rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .15s ease, background .2s ease;
+}
+
+.btn:active { transform: translateY(2px); }
+.btn.ghost { background: transparent; color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-dim); }
+.btn.lagoon { background: var(--lagoon); color: #04241f; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* ---------- Ticket / boarding pass -------------------------------- */
+
+.ticket {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 3px;
+  padding: 1.35rem 1.25rem;
+  box-shadow: 0 24px 50px -30px rgba(0,0,0,.9);
+}
+
+/* the punched notches down each side of a real ticket */
+.ticket::before, .ticket::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 22px; height: 22px;
+  background: var(--night);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+.ticket::before { left: -11px; }
+.ticket::after  { right: -11px; }
+
+.ticket-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px dashed rgba(42,33,24,.35);
+}
+
+.wordmark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: .02em;
+}
+
+.wordmark span { color: var(--gold-dim); }
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: .5rem;
+  padding: 1.1rem 0;
+}
+
+.iata {
+  font-family: var(--poster);
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: .02em;
+}
+
+.iata small { display: block; font-family: var(--mono); font-size: .625rem; letter-spacing: .16em; opacity: .6; margin-top: .3rem; }
+
+.leg-arrow { color: var(--gold-dim); }
+
+.ticket-rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; border-top: 1px dashed rgba(42,33,24,.35); padding-top: .85rem; }
+.ticket-rows dt { font-family: var(--mono); font-size: .5625rem; letter-spacing: .16em; text-transform: uppercase; opacity: .55; }
+.ticket-rows dd { margin: .2rem 0 0; font-family: var(--mono); font-size: .8125rem; font-weight: 500; }
+
+.barcode { display: flex; gap: 2px; height: 34px; margin-top: 1rem; align-items: stretch; }
+.barcode i { display: block; background: var(--ink); border-radius: .5px; }
+
+/* ---------- Landmark elimination wall ----------------------------- */
+
+.wall {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .6rem;
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: .5rem;
+  border: 1px solid rgba(224,177,92,.28);
+  border-radius: 2px;
+  background: rgba(224,177,92,.04);
+  cursor: pointer;
+  transition: background .25s, border-color .25s, transform .25s;
+}
+
+.tile svg { width: 70%; height: 70%; color: var(--gold); transition: color .25s, opacity .25s; }
+.tile .label { position: absolute; bottom: .35rem; font-family: var(--mono); font-size: .5rem; letter-spacing: .1em; opacity: .5; text-transform: uppercase; }
+
+.tile:active { transform: scale(.96); }
+
+.tile.out { border-color: rgba(226,112,90,.35); background: rgba(226,112,90,.05); }
+.tile.out svg { color: var(--coral); opacity: .3; }
+.tile.out .label { opacity: .3; }
+
+.tile.out::after {
+  content: "NO";
+  position: absolute;
+  inset: auto;
+  font-family: var(--poster);
+  font-size: 1.5rem;
+  color: var(--coral);
+  border: 2px solid var(--coral);
+  padding: .05em .3em;
+  transform: rotate(-14deg);
+  opacity: .85;
+  animation: stampIn .3s cubic-bezier(.3,1.4,.5,1) both;
+}
+
+@keyframes stampIn {
+  from { transform: rotate(-14deg) scale(2.4); opacity: 0; }
+  to   { transform: rotate(-14deg) scale(1); opacity: .85; }
+}
+
+/* ---------- Combination lock -------------------------------------- */
+
+.lock {
+  display: flex;
+  justify-content: center;
+  gap: .4rem;
+  padding: 1.1rem;
+  background: linear-gradient(180deg, var(--night-3), var(--night-2));
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(224,177,92,.18), 0 18px 40px -28px #000;
+}
+
+.dial { display: flex; flex-direction: column; align-items: center; gap: .35rem;
+        flex: 1 1 0; min-width: 0; max-width: 58px; }
+
+.dial button {
+  width: 100%; height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--gold-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.dial button:active { background: rgba(224,177,92,.12); }
+
+.dial-window {
+  width: 100%; height: 58px;
+  display: grid; place-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 1.6rem;
+  border-radius: 2px;
+  box-shadow: inset 0 3px 8px rgba(42,33,24,.35);
+}
+
+/* ---------- Split-flap departure board ---------------------------- */
+
+.board {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  padding: 1rem .6rem;
+  background: #080f18;
+  border-radius: 3px;
+  box-shadow: inset 0 0 30px rgba(0,0,0,.8);
+}
+
+.flap {
+  position: relative;
+  width: 1.35em;
+  height: 1.9em;
+  background: linear-gradient(180deg, #24313f 0 49.5%, #1a242f 50.5% 100%);
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.35rem, 6.5vw, 2rem);
+  color: var(--paper);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.flap::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: rgba(0,0,0,.55);
+}
+
+.flap.spin { animation: flapShake .07s linear infinite; }
+@keyframes flapShake { 50% { transform: translateY(-1px); } }
+
+.board-legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: .5625rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  padding: 0 .3rem;
+}
+
+/* ---------- Itinerary (the bait) ---------------------------------- */
+
+.itin { display: flex; flex-direction: column; gap: 0; }
+
+.itin-row {
+  display: grid;
+  grid-template-columns: 3.1rem 1fr;
+  gap: .9rem;
+  padding: .9rem 0;
+  border-bottom: 1px solid rgba(224,177,92,.16);
+  align-items: baseline;
+}
+
+.itin-row dt { font-family: var(--mono); font-size: .625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.itin-row dd { margin: 0; font-size: .95rem; }
+
+.itin-row.blank { cursor: pointer; }
+.itin-row.blank dd { color: var(--gold-dim); font-family: var(--mono); letter-spacing: .25em; }
+.itin-row.blank:active { background: rgba(224,177,92,.06); }
+
+/* ---------- Alert / gate change ----------------------------------- */
+
+.alert {
+  border: 1px solid var(--coral);
+  border-left-width: 3px;
+  background: rgba(226,112,90,.09);
+  padding: 1rem 1.1rem;
+  border-radius: 2px;
+  animation: alertPulse 1.1s ease-in-out 3;
+}
+
+@keyframes alertPulse {
+  50% { background: rgba(226,112,90,.2); }
+}
+
+.alert .kicker { color: var(--coral); }
+
+/* ---------- The finale: lagoon takes over ------------------------- */
+
+#app.lagoon-mode { background: linear-gradient(180deg, #04241f 0%, #0a3f38 45%, #12665c 100%); }
+#app.lagoon-mode .kicker { color: var(--lagoon-lt); }
+#app.lagoon-mode .script { color: var(--lagoon-lt); }
+#app.lagoon-mode .rule { background: linear-gradient(90deg, var(--lagoon), transparent); }
+#app.lagoon-mode .btn.ghost { color: var(--lagoon-lt); box-shadow: inset 0 0 0 1px rgba(127,220,210,.45); }
+#app.lagoon-mode .small { color: rgba(127,220,210,.7); }
+#app.lagoon-mode #sky svg,
+#app.lagoon-mode #sky .qm { color: var(--lagoon-lt); }
+
+.horizon {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 50% 100%, rgba(127,220,210,.28), transparent 70%);
+}
+
+
+/* ---------- The atoll, drawn rather than photographed -------------- */
+
+.atoll {
+  margin: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 26px 55px -34px rgba(0,0,0,.85);
+}
+
+.atoll canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+.atoll figcaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .8rem .95rem;
+  background: rgba(4,36,31,.85);
+  border-top: 1px solid rgba(127,220,210,.3);
+}
+
+.resort {
+  font-family: var(--poster);
+  font-size: 1.25rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+.resort-sub {
+  font-family: var(--mono);
+  font-size: .625rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--lagoon-lt);
+}
+
+/* ---------- Confetti / boarding-pass canvas ----------------------- */
+
+#fx { position: absolute; inset: 0; z-index: 8000; pointer-events: none; }
+
+/* ---------- Small print ------------------------------------------- */
+
+.small {
+  font-family: var(--mono);
+  font-size: .625rem;
+  letter-spacing: .1em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.note {
+  font-family: var(--mono);
+  font-size: .625rem;
+  letter-spacing: .08em;
+  line-height: 1.7;
+  color: rgba(224,177,92,.55);
+  border-top: 1px dashed rgba(224,177,92,.25);
+  padding-top: .7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+
+<div id="app">
+  <div id="sky" aria-hidden="true"></div>
+  <div class="horizon" aria-hidden="true" style="display:none"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <!-- 1 ─ COVER ---------------------------------------------------- -->
+  <section class="scene is-on centre gap-lg" id="s-cover">
+    <div class="stack gap-sm">
+      <p class="kicker">Gold Air &middot; Birmingham</p>
+      <h1 class="poster">Somewhere<br>you have<br>never been</h1>
+      <p class="script">One passenger. One birthday. One very large secret.</p>
+    </div>
+
+    <div class="stack gap-sm">
+      <button class="btn" data-go="s-wall">Open your boarding pass</button>
+      <p class="small" style="text-align:center">Flight GA30 &middot; Departing today</p>
+    </div>
+  </section>
+
+  <!-- 2 ─ LANDMARK WALL -------------------------------------------- -->
+  <section class="scene gap-md" id="s-wall">
+    <div class="stack gap-xs">
+      <p class="kicker">Question 1 of 3</p>
+      <h2 class="poster">Rule them out</h2>
+      <p class="script" id="wall-q">Tap the one place we have already been together.</p>
+    </div>
+
+    <div class="wall" id="wall"></div>
+
+    <p class="small" id="wall-hint" style="text-align:center">&nbsp;</p>
+    <div class="grow"></div>
+    <p class="note">Placeholder question. Swap in one only the two of you could answer.</p>
+  </section>
+
+  <!-- 3 ─ COMBINATION LOCK ----------------------------------------- -->
+  <section class="scene gap-md" id="s-lock">
+    <div class="stack gap-xs">
+      <p class="kicker">Question 2 of 3</p>
+      <h2 class="poster">Luggage lock</h2>
+      <p class="script">Set the dials to the day everything started.</p>
+    </div>
+
+    <div class="lock" id="lock"></div>
+
+    <p class="small" id="lock-msg" style="text-align:center">&nbsp;</p>
+    <div class="grow"></div>
+    <p class="note">Code is 0&nbsp;5&nbsp;0&nbsp;3.</p>
+  </section>
+
+  <!-- 4 ─ THE BOARD ------------------------------------------------ -->
+  <section class="scene centre gap-md" id="s-board">
+    <div class="stack gap-xs" style="align-items:center">
+      <p class="kicker">Now boarding</p>
+    </div>
+
+    <div class="stack gap-xs">
+      <div class="board" id="board"></div>
+      <div class="board-legend"><span>Gate 12</span><span id="board-status">Standby</span></div>
+    </div>
+
+    <button class="btn ghost" id="board-go" hidden>Well then</button>
+  </section>
+
+  <!-- 5 ─ THE FAKE ENDING ------------------------------------------ -->
+  <section class="scene gap-md" id="s-doha">
+    <div class="stack gap-xs">
+      <p class="kicker">Confirmed &middot; Qatar</p>
+      <h2 class="poster">Happy 30th,<br>Nicole</h2>
+      <p class="script">Four nights in Doha. Pack for heat, and for one very small person who will not sit still.</p>
+    </div>
+
+    <dl class="itin">
+      <div class="itin-row"><dt>Day 1</dt><dd>Land, collapse, order everything on the room service menu.</dd></div>
+      <div class="itin-row"><dt>Day 2</dt><dd>Souq Waqif in the evening, when it finally cools down.</dd></div>
+      <div class="itin-row"><dt>Day 3</dt><dd>The desert. Yes, there are camels. No, you do not have to.</dd></div>
+      <div class="itin-row blank" id="bait" role="button" tabindex="0">
+        <dt>Day 4</dt><dd>— — — — —</dd>
+      </div>
+    </dl>
+
+    <div class="stack gap-xs">
+      <hr class="rule">
+      <p class="small">Gold Air &middot; Thank you for flying with us</p>
+    </div>
+
+    <div class="grow"></div>
+    <p class="note">She taps Day 4. You can also long-press this line to force it.</p>
+  </section>
+
+  <!-- 6 ─ THE RUG PULL --------------------------------------------- -->
+  <section class="scene centre gap-md" id="s-alert">
+    <div class="alert stack gap-xs">
+      <p class="kicker">Gate change</p>
+      <h2 class="poster" style="font-size:1.9rem">Doha is not<br>the destination</h2>
+      <p class="script" style="font-size:1rem">It is where we change planes. There is a second boarding pass in your wallet.</p>
+    </div>
+
+    <button class="btn" data-go="s-board2">Show me</button>
+  </section>
+
+  <!-- 7 ─ THE REAL BOARD ------------------------------------------- -->
+  <section class="scene centre gap-md" id="s-board2">
+    <div class="stack gap-xs" style="align-items:center">
+      <p class="kicker">Connecting flight</p>
+    </div>
+
+    <div class="stack gap-xs">
+      <div class="board" id="board2"></div>
+      <div class="board-legend"><span>Gate ??</span><span id="board2-status">Standby</span></div>
+    </div>
+
+    <button class="btn lagoon" id="board2-go" hidden>Keep going</button>
+  </section>
+
+  <!-- 8 ─ THE REAL REVEAL ------------------------------------------ -->
+  <section class="scene centre gap-md" id="s-reveal">
+    <div class="stack gap-sm">
+      <p class="kicker">Final destination</p>
+      <h1 class="poster">The<br>Maldives</h1>
+      <p class="script">Birmingham to Doha. Doha to Malé. Then a seaplane, and then nothing but water.</p>
+    </div>
+
+    <div class="ticket" id="finalTicket">
+      <div class="ticket-head">
+        <span class="wordmark">Gold<span>Air</span></span>
+        <span class="small" style="color:var(--gold-dim)">GA30</span>
+      </div>
+
+      <div class="ticket-grid">
+        <span class="iata">MLE<small>Malé</small></span>
+        <svg class="leg-arrow" width="26" height="12" viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M0 6h24m0 0-5-5m5 5-5 5"/>
+        </svg>
+        <span class="iata" style="text-align:right">SEA<small>Seaplane</small></span>
+      </div>
+
+      <dl class="ticket-rows">
+        <div><dt>Passenger</dt><dd>N. PLATTEN</dd></div>
+        <div><dt>Occasion</dt><dd>30TH</dd></div>
+        <div><dt>Party</dt><dd>3</dd></div>
+      </dl>
+
+      <div class="barcode" id="barcode"></div>
+    </div>
+
+    <button class="btn ghost" data-go="s-letter">There's more</button>
+  </section>
+
+  <!-- 9 ─ THE LETTER ----------------------------------------------- -->
+  <section class="scene centre gap-md" id="s-letter">
+    <figure class="atoll">
+      <canvas id="atoll" aria-label="An atoll at sunset with overwater villas"></canvas>
+      <figcaption>
+        <span class="resort">Riu Atoll</span>
+        <span class="resort-sub">Maldives &middot; 10 nights</span>
+      </figcaption>
+    </figure>
+
+    <div class="stack gap-sm">
+      <p class="kicker">One last thing</p>
+      <h2 class="poster" style="font-size:2.1rem">Nicole,<br>happy 30th</h2>
+      <p style="font-size:1.08rem; line-height:1.7">
+        You deserve the world.
+      </p>
+      <p style="font-size:1.08rem; line-height:1.7">
+        Thank you for being the best fianc&eacute;e &mdash; but more importantly,
+        the best mom.
+      </p>
+      <p class="script" style="font-size:1.2rem">
+        Enjoy the next 10 days of you time.
+      </p>
+    </div>
+
+    <div class="stack gap-xs">
+      <hr class="rule">
+      <p class="small">Gold Air &middot; Birmingham &rarr; Doha &rarr; Mal&eacute;</p>
+    </div>
+
+    <button class="btn ghost" data-go="s-cover">Start again</button>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (s) { return document.querySelector(s); };
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- scene routing ------------------------------------------- */
+  function go(id) {
+    document.querySelectorAll(".scene").forEach(function (s) { s.classList.remove("is-on"); });
+    var el = document.getElementById(id);
+    el.classList.add("is-on");
+    el.scrollTop = 0;
+    if (id === "s-board")  runBoard();
+    if (id === "s-board2") runBoard2();
+    if (id === "s-reveal") toLagoon();
+  }
+
+  document.querySelectorAll("[data-go]").forEach(function (b) {
+    b.addEventListener("click", function () { go(b.dataset.go); });
+  });
+
+  /* ---- landmark glyphs ----------------------------------------- */
+  var LANDMARKS = {
+    eiffel:  'M12 2 10.5 9 6 22h3l3-7 3 7h3l-4.5-13Z M8.6 13h6.8 M7.4 17h9.2',
+    pyramid: 'M2 21h20L12 3Z M12 3 7 21 M12 3l5 18',
+    bigben:  'M9 21V9h6v12Z M9 9l3-4 3 4 M10.5 12h3v3h-3Z M12 5V2',
+    taj:     'M12 3c2.2 1.6 3.4 3.6 3.4 6 0 2-1.4 3.6-3.4 3.6S8.6 11 8.6 9c0-2.4 1.2-4.4 3.4-6Z M6 21V13 M18 21v-8 M3 21h18 M9 21v-5a3 3 0 0 1 6 0v5',
+    opera:   'M2 20c3-8 6-8 8 0 M9 20c3-9 6-9 8 0 M15 20c2.5-6 5-6 7 0 M2 20h20',
+    rome:    'M4 20V8a8 8 0 0 1 16 0v12Z M4 12h16 M4 16h16 M9 8v12 M15 8v12',
+    liberty: 'M12 22V11 M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M12 7 10 3l2 1 2-1Z M12 9 8 5 M8 22h8',
+    doha:    'M8 22V10c0-3 4-3 4-6 0 3 4 3 4 6v12Z M12 4V2 M4 22h16',
+    balloon: 'M12 2.4c3.6 0 6.5 2.9 6.5 6.5 0 4-3.3 6.9-6.5 10.6C8.8 15.8 5.5 12.9 5.5 8.9c0-3.6 2.9-6.5 6.5-6.5Z M12 2.4v17.1 M8.4 4.5C7 7.4 7.6 12 12 19.5 M15.6 4.5C17 7.4 16.4 12 12 19.5 M10.4 20.1h3.2v2.3h-3.2Z M10.8 19.7l-.3.4 M13.2 19.7l.3.4',
+    palm:    'M12 22V11 M12 11c-3-3-6-3-8-1 3-2 6-1 8 1Z M12 11c3-3 6-3 8-1-3-2-6-1-8 1Z M12 11c-1-4-3-6-6-6 3 0 5 2 6 6Z M12 11c1-4 3-6 6-6-3 0-5 2-6 6Z'
+  };
+
+  function glyph(key) {
+    var paths = LANDMARKS[key].split(" M").map(function (d, i) { return i ? "M" + d : d; });
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" ' +
+           'stroke-linecap="round" stroke-linejoin="round">' +
+           paths.map(function (d) { return '<path d="' + d + '"/>'; }).join("") + '</svg>';
+  }
+
+  /* ---- backdrop ------------------------------------------------- */
+  (function sky() {
+    var host = $("#sky");
+    var keys = Object.keys(LANDMARKS);
+    var spots = [
+      [8, 12, 74], [68, 6, 58], [80, 30, 46], [4, 40, 52],
+      [72, 62, 66], [14, 72, 60], [46, 86, 50], [58, 40, 40]
+    ];
+    spots.forEach(function (p, i) {
+      var d = document.createElement("div");
+      d.innerHTML = glyph(keys[i % keys.length]);
+      var svg = d.firstChild;
+      svg.style.left = p[0] + "%";
+      svg.style.top = p[1] + "%";
+      svg.style.width = p[2] + "px";
+      svg.style.height = p[2] + "px";
+      svg.style.transform = "rotate(" + (i % 2 ? -6 : 5) + "deg)";
+      host.appendChild(svg);
+    });
+    [[30, 20, 90], [86, 50, 64], [20, 55, 70], [62, 80, 78]].forEach(function (q) {
+      var s = document.createElement("span");
+      s.className = "qm";
+      s.textContent = "?";
+      s.style.left = q[0] + "%";
+      s.style.top = q[1] + "%";
+      s.style.fontSize = q[2] + "px";
+      host.appendChild(s);
+    });
+  }());
+
+  /* ---- 2. landmark elimination wall ----------------------------- */
+  (function wall() {
+    var host = $("#wall");
+    var items = [
+      { k: "eiffel",  n: "Paris" },      { k: "rome",    n: "Rome" },
+      { k: "bigben",  n: "London" },     { k: "taj",     n: "Agra" },
+      { k: "opera",   n: "Sydney" },     { k: "liberty", n: "New York" },
+      { k: "pyramid", n: "Giza" },       { k: "doha",    n: "Doha" },
+      { k: "balloon", n: "Cappadocia" }
+    ];
+    var CORRECT = "balloon";   // Cappadocia — the one they have already been to
+    var done = false;
+
+    items.forEach(function (it) {
+      var b = document.createElement("button");
+      b.className = "tile";
+      b.type = "button";
+      b.innerHTML = glyph(it.k) + '<span class="label">' + it.n + "</span>";
+      b.addEventListener("click", function () {
+        if (done) return;
+        if (it.k === CORRECT) {
+          done = true;
+          $("#wall-hint").textContent = "That's the one.";
+          host.querySelectorAll(".tile").forEach(function (t) {
+            if (t !== b) t.classList.add("out");
+          });
+          setTimeout(function () { go("s-lock"); }, 1500);
+        } else {
+          b.classList.add("out");
+          $("#wall-hint").textContent = "Not that one.";
+        }
+      });
+      host.appendChild(b);
+    });
+  }());
+
+  /* ---- 3. combination lock -------------------------------------- */
+  (function lock() {
+    var host = $("#lock");
+    var CODE = [0, 5, 0, 3];           // 5th March
+    var state = [0, 0, 0, 0];
+    var wins = [];
+
+    state.forEach(function (_, i) {
+      var d = document.createElement("div");
+      d.className = "dial";
+      d.innerHTML = '<button type="button" aria-label="Up">▲</button>' +
+                    '<div class="dial-window">0</div>' +
+                    '<button type="button" aria-label="Down">▼</button>';
+      var win = d.querySelector(".dial-window");
+      wins.push(win);
+      var bump = function (n) {
+        state[i] = (state[i] + n + 10) % 10;
+        win.textContent = state[i];
+        check();
+      };
+      d.querySelectorAll("button")[0].addEventListener("click", function () { bump(1); });
+      d.querySelectorAll("button")[1].addEventListener("click", function () { bump(-1); });
+      host.appendChild(d);
+    });
+
+    var opened = false;
+    function check() {
+      if (opened) return;
+      if (state.join("") === CODE.join("")) {
+        opened = true;
+        $("#lock-msg").textContent = "Open.";
+        setTimeout(function () { go("s-board"); }, 900);
+      }
+    }
+  }());
+
+  /* ---- split-flap board ----------------------------------------- */
+  var CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+
+  function buildBoard(host, len) {
+    host.innerHTML = "";
+    var flaps = [];
+    for (var i = 0; i < len; i++) {
+      var f = document.createElement("span");
+      f.className = "flap";
+      f.textContent = " ";
+      host.appendChild(f);
+      flaps.push(f);
+    }
+    return flaps;
+  }
+
+  function flapTo(flaps, word, done) {
+    if (reduce) {
+      flaps.forEach(function (f, i) { f.textContent = word[i] || " "; });
+      if (done) done();
+      return;
+    }
+    var settled = 0;
+    flaps.forEach(function (f, i) {
+      var target = (word[i] || " ").toUpperCase();
+      var ticks = 14 + i * 7;
+      var n = 0;
+      f.classList.add("spin");
+      var t = setInterval(function () {
+        f.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+        if (++n >= ticks) {
+          clearInterval(t);
+          f.textContent = target;
+          f.classList.remove("spin");
+          if (++settled === flaps.length && done) done();
+        }
+      }, 55);
+    });
+  }
+
+  var board1, board2;
+
+  function runBoard() {
+    if (!board1) board1 = buildBoard($("#board"), 5);
+    $("#board-status").textContent = "Calling";
+    $("#board-go").hidden = true;
+    setTimeout(function () {
+      flapTo(board1, "DOHA ", function () {
+        $("#board-status").textContent = "Confirmed";
+        $("#board-go").hidden = false;
+        burst("#e0b15c");
+      });
+    }, 500);
+  }
+
+  $("#board-go").addEventListener("click", function () { go("s-doha"); });
+
+  function runBoard2() {
+    if (!board2) board2 = buildBoard($("#board2"), 8);
+    $("#board2-status").textContent = "Re-calling";
+    $("#board2-go").hidden = true;
+    setTimeout(function () {
+      flapTo(board2, "MALDIVES", function () {
+        $("#board2-status").textContent = "Confirmed";
+        $("#board2-go").hidden = false;
+        burst("#7fdcd2");
+      });
+    }, 500);
+  }
+
+  $("#board2-go").addEventListener("click", function () { go("s-reveal"); });
+
+  /* ---- 5. the bait ---------------------------------------------- */
+  var bait = $("#bait");
+  bait.addEventListener("click", function () { go("s-alert"); });
+  bait.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go("s-alert"); }
+  });
+
+  /* ---- lagoon takeover ------------------------------------------ */
+  function toLagoon() {
+    $("#app").classList.add("lagoon-mode");
+    document.querySelector(".horizon").style.display = "block";
+  }
+
+  /* ---- barcode --------------------------------------------------- */
+  (function barcode() {
+    var host = $("#barcode");
+    for (var i = 0; i < 46; i++) {
+      var b = document.createElement("i");
+      b.style.width = (Math.random() < .28 ? 3 : 1) + "px";
+      b.style.opacity = Math.random() < .12 ? ".25" : "1";
+      host.appendChild(b);
+    }
+  }());
+
+  /* ---- confetti -------------------------------------------------- */
+  var cv = $("#fx"), ctx = cv.getContext("2d"), bits = [];
+
+  function size() { cv.width = cv.offsetWidth; cv.height = cv.offsetHeight; }
+  size();
+  window.addEventListener("resize", size);
+
+  function burst(colour) {
+    if (reduce) return;
+    for (var i = 0; i < 90; i++) {
+      bits.push({
+        x: cv.width / 2 + (Math.random() - .5) * 90,
+        y: cv.height * .42,
+        vx: (Math.random() - .5) * 7,
+        vy: -Math.random() * 9 - 3,
+        r: Math.random() * 5 + 2,
+        a: Math.random() * Math.PI,
+        va: (Math.random() - .5) * .3,
+        c: Math.random() < .5 ? colour : "#f3e8d4",
+        life: 1
+      });
+    }
+    if (bits.length) requestAnimationFrame(tick);
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    bits = bits.filter(function (p) { return p.life > 0; });
+    bits.forEach(function (p) {
+      p.vy += .28; p.x += p.vx; p.y += p.vy; p.a += p.va; p.life -= .008;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.a);
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r, -p.r * .4, p.r * 2, p.r * .8);
+      ctx.restore();
+    });
+    if (bits.length) requestAnimationFrame(tick);
+    else ctx.clearRect(0, 0, cv.width, cv.height);
+  }
+
+  /* ---- the atoll -------------------------------------------------
+     Drawn on canvas rather than photographed, so it sits in the same
+     illustrated world as everything else — and so it weighs nothing. */
+  (function atoll() {
+    var cv = document.getElementById("atoll");
+    if (!cv) return;
+    var g = cv.getContext("2d");
+    var W = 0, H = 0, t = 0, raf = null;
+
+    function fit() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = cv.clientWidth || 360;
+      var h = Math.round(w * 10 / 16);
+      cv.width = w * dpr; cv.height = h * dpr;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      W = w; H = h;
+    }
+
+    function palm(x, base, scale, lean) {
+      g.save();
+      g.translate(x, base);
+      g.scale(scale, scale);
+      g.strokeStyle = "#0b2c2a";
+      g.lineWidth = 2.2;
+      g.lineCap = "round";
+      g.beginPath();
+      g.moveTo(0, 0);
+      g.quadraticCurveTo(lean * 3, -14, lean * 8, -26);
+      g.stroke();
+      g.lineWidth = 1.8;
+      for (var i = 0; i < 6; i++) {
+        var a = -Math.PI + (i / 5) * Math.PI;
+        g.beginPath();
+        g.moveTo(lean * 8, -26);
+        g.quadraticCurveTo(
+          lean * 8 + Math.cos(a) * 8, -30 + Math.sin(a) * 5,
+          lean * 8 + Math.cos(a) * 15, -24 + Math.sin(a) * 9
+        );
+        g.stroke();
+      }
+      g.restore();
+    }
+
+    function villa(x, y, w) {
+      var h = w * 0.5;
+      g.fillStyle = "#0b2c2a";
+      /* stilts */
+      g.fillRect(x + w * .18, y, 2, h * .75);
+      g.fillRect(x + w * .78, y, 2, h * .75);
+      /* deck */
+      g.fillRect(x, y - 3, w, 4);
+      /* thatched roof */
+      g.beginPath();
+      g.moveTo(x - w * .12, y - 3);
+      g.lineTo(x + w / 2, y - 3 - h * .7);
+      g.lineTo(x + w * 1.12, y - 3);
+      g.closePath();
+      g.fill();
+      /* a light on inside */
+      g.fillStyle = "rgba(240,217,168,.85)";
+      g.fillRect(x + w * .38, y - 9, w * .24, 5);
+    }
+
+    function draw() {
+      var horizon = H * 0.56;
+
+      /* sky */
+      var sky = g.createLinearGradient(0, 0, 0, horizon);
+      sky.addColorStop(0, "#12463f");
+      sky.addColorStop(.55, "#2f8a7c");
+      sky.addColorStop(1, "#f0c98a");
+      g.fillStyle = sky;
+      g.fillRect(0, 0, W, horizon);
+
+      /* sun */
+      var sunY = horizon - H * .1;
+      var glow = g.createRadialGradient(W * .72, sunY, 2, W * .72, sunY, H * .34);
+      glow.addColorStop(0, "rgba(247,236,216,.95)");
+      glow.addColorStop(.25, "rgba(240,201,138,.55)");
+      glow.addColorStop(1, "rgba(240,201,138,0)");
+      g.fillStyle = glow;
+      g.fillRect(0, 0, W, horizon);
+      g.beginPath();
+      g.arc(W * .72, sunY, H * .075, 0, Math.PI * 2);
+      g.fillStyle = "#f7ecd8";
+      g.fill();
+
+      /* sea */
+      var sea = g.createLinearGradient(0, horizon, 0, H);
+      sea.addColorStop(0, "#7fdcd2");
+      sea.addColorStop(.35, "#2fb3a8");
+      sea.addColorStop(1, "#0c5f58");
+      g.fillStyle = sea;
+      g.fillRect(0, horizon, W, H - horizon);
+
+      /* the sun's path on the water */
+      g.save();
+      g.globalAlpha = .5;
+      for (var r = 0; r < 22; r++) {
+        var yy = horizon + r * ((H - horizon) / 22);
+        var wob = Math.sin(t / 26 + r * .6) * (4 + r * .8);
+        var len = 8 + r * 2.6;
+        g.fillStyle = "rgba(247,236,216," + (.5 - r * .02) + ")";
+        g.fillRect(W * .72 - len / 2 + wob, yy, len, 1.6);
+      }
+      g.restore();
+
+      /* shimmer */
+      g.save();
+      g.globalAlpha = .22;
+      g.fillStyle = "#eafffb";
+      for (var i = 0; i < 26; i++) {
+        var y2 = horizon + 4 + (i * (H - horizon)) / 26;
+        var x2 = ((i * 97 + Math.sin(t / 30 + i) * 26) % (W + 60)) - 30;
+        g.fillRect(x2, y2, 10 + (i % 5) * 5, 1);
+      }
+      g.restore();
+
+      /* far island */
+      g.fillStyle = "#0e3b37";
+      g.beginPath();
+      g.ellipse(W * .2, horizon, W * .17, H * .022, 0, 0, Math.PI * 2);
+      g.fill();
+      palm(W * .16, horizon - 1, .55, -1);
+      palm(W * .23, horizon - 1, .48, 1);
+
+      /* sandbank */
+      g.fillStyle = "#f7ecd8";
+      g.beginPath();
+      g.ellipse(W * .17, horizon + H * .085, W * .2, H * .035, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = "rgba(127,220,210,.35)";
+      g.beginPath();
+      g.ellipse(W * .17, horizon + H * .085, W * .27, H * .06, 0, 0, Math.PI * 2);
+      g.fill();
+
+      /* the villas, on their jetty */
+      var jettyY = horizon + H * .2;
+      g.strokeStyle = "#0b2c2a";
+      g.lineWidth = 3;
+      g.beginPath();
+      g.moveTo(W * .34, jettyY);
+      g.lineTo(W, jettyY);
+      g.stroke();
+      villa(W * .46, jettyY, W * .13);
+      villa(W * .66, jettyY, W * .15);
+      villa(W * .87, jettyY, W * .17);
+
+      /* reflections — broken streaks, not blocks */
+      g.save();
+      g.fillStyle = "#04241f";
+      [[.52, .13], [.735, .15], [.955, .17]].forEach(function (v, k) {
+        for (var r2 = 0; r2 < 7; r2++) {
+          var wob2 = Math.sin(t / 24 + r2 * .9 + k) * (2 + r2);
+          var wd = W * v[1] * (.6 - r2 * .06);
+          g.globalAlpha = .22 - r2 * .028;
+          g.fillRect(W * v[0] - wd / 2 + wob2, jettyY + 8 + r2 * 5, wd, 2.5);
+        }
+      });
+      g.restore();
+
+      /* a bird or two, because the sky was empty */
+      g.strokeStyle = "rgba(11,44,42,.5)";
+      g.lineWidth = 1.4;
+      [[W * .3, H * .16, 7], [W * .38, H * .21, 5]].forEach(function (bd) {
+        g.beginPath();
+        g.moveTo(bd[0] - bd[2], bd[1]);
+        g.quadraticCurveTo(bd[0] - bd[2] / 2, bd[1] - bd[2] * .55, bd[0], bd[1]);
+        g.quadraticCurveTo(bd[0] + bd[2] / 2, bd[1] - bd[2] * .55, bd[0] + bd[2], bd[1]);
+        g.stroke();
+      });
+    }
+
+    function loop() { t++; draw(); raf = requestAnimationFrame(loop); }
+
+    function start() {
+      fit(); draw();
+      if (!reduce && !raf) loop();
+    }
+
+    window.addEventListener("resize", function () { fit(); draw(); });
+
+    /* only paint once the final scene is actually on screen */
+    var obs = new MutationObserver(function () {
+      var on = document.getElementById("s-letter").classList.contains("is-on");
+      if (on && !raf) start();
+      else if (!on && raf) { cancelAnimationFrame(raf); raf = null; }
+    });
+    obs.observe(document.getElementById("s-letter"), { attributes: true, attributeFilter: ["class"] });
+    if (document.getElementById("s-letter").classList.contains("is-on")) start();
+  }());
+
+  /* ---- progress, so a stray refresh or a wriggling baby doesn't
+          throw away where she got to --------------------------------- */
+  var ORDER = ["s-cover","s-wall","s-lock","s-board","s-doha",
+               "s-alert","s-board2","s-reveal","s-letter"];
+  var KEY = "ga30";
+
+  var save = function (id) { try { localStorage.setItem(KEY, id); } catch (e) {} };
+  var load = function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
+
+  var _go = go;
+  go = function (id) { _go(id); save(id); };
+
+  var resume = load();
+  if (resume && ORDER.indexOf(resume) > 0) _go(resume);
+
+  /* ---- your override: press and hold the top-left corner for a second
+          and it moves on. For if she stalls, or you want to force the
+          gate change yourself. ------------------------------------- */
+  function holdZone(corner, ms, fn) {
+    var z = document.createElement("div");
+    z.style.cssText = "position:fixed;width:64px;height:64px;z-index:9500;" +
+      (corner === "tl" ? "top:0;left:0" : "bottom:0;right:0");
+    document.body.appendChild(z);
+    var t = null;
+    var start = function () { t = setTimeout(fn, ms); };
+    var stop = function () { clearTimeout(t); };
+    z.addEventListener("touchstart", start, { passive: true });
+    z.addEventListener("mousedown", start);
+    ["touchend","touchcancel","mouseup","mouseleave"].forEach(function (ev) {
+      z.addEventListener(ev, stop);
+    });
+  }
+
+  holdZone("tl", 900, function () {
+    var cur = document.querySelector(".scene.is-on");
+    var i = ORDER.indexOf(cur ? cur.id : "s-cover");
+    if (i > -1 && i < ORDER.length - 1) go(ORDER[i + 1]);
+  });
+
+  /* ---- reset: hold the bottom-right corner for two seconds.
+          Use this after you've rehearsed, before you hand it over. --- */
+  holdZone("br", 2000, function () {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    location.reload();
+  });
+}());
+</script>
+</body>
+</html>
